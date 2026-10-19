@@ -496,6 +496,14 @@ the next sync. An album's detail entry is persisted at `staleTime: Infinity`
 and no sync rewrites it, so without it a track added to an album already opened
 once never appeared on it at all, though search found it in the tracks list.
 
+The playlist's missing membership is also the offline story: with the server
+unreachable the screen rebuilds the songs locally, from the playlist's own
+`songIds` where a playlist carries them (generated/favorites) and otherwise from
+the downloaded collection's `trackIds` resolved against the catalog — so a fully
+downloaded playlist lists its songs offline instead of opening empty. That is
+the same fallback `useAlbum` has for albums, except the album's tracks come out
+of the catalog by album id, which a listing's playlist record never holds.
+
 `sync(force?: boolean)` throttles at 30 minutes by default; `force=true`
 bypasses that throttle, and bypasses nothing else — every run that gets past it
 refetches all six resources. `syncPlaylists()` refreshes only the playlist list
