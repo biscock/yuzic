@@ -23,10 +23,8 @@ import { selectActiveServer } from '@/state/redux/selectors/serversSelectors';
 import { hasValue, useOfflineFirstQuery } from '@/state/query/useOfflineFirstQuery';
 import { usePlaylists } from '@/features/playlist/usePlaylists';
 import { useCatalogStore } from '@/features/library/useCatalogStore';
-import { useDownloadState } from '@/features/offline/DownloadContext';
 import { getPlaylist } from './playlistRepository';
 import { resolvePlaylistOrigin, type PlaylistOrigin } from './playlistOrigin';
-import { downloadedPlaylistSongs } from './downloadedPlaylistSongs';
 
 export type PlaylistRouteParams = {
   id: string;
@@ -39,8 +37,7 @@ export type PlaylistScreenModel = {
   songs: Song[];
   songsLoading: boolean;
   /** A playlist's membership was never synced list-wide, only its metadata,
-   *  so a degraded playlist that was never opened online shows no songs —
-   *  unless it was downloaded, when it shows the tracks it saved. */
+   *  so a degraded playlist that was never opened online shows no songs. */
   degraded: boolean;
   /** Where this playlist came from — `null` until the playlist itself is
    *  known. */
@@ -54,13 +51,10 @@ export function usePlaylistScreenModel(params: PlaylistRouteParams): PlaylistScr
   const serverId = activeServer?.id;
   const { playlists: libraryPlaylists } = usePlaylists();
   const store = useCatalogStore();
-  const { getAllDownloadedCollections } = useDownloadState();
   const fallbackPlaylist = useMemo(() => {
     const playlist = store.playlistByNativeId.get(id);
-    if (!playlist || !serverId) return undefined;
-    const songs = downloadedPlaylistSongs(getAllDownloadedCollections(), id, serverId, store.songByNativeId);
-    return { playlist, songs };
-  }, [store, id, serverId, getAllDownloadedCollections]);
+    return playlist ? { playlist, songs: [] } : undefined;
+  }, [store, id]);
 
   const query = useOfflineFirstQuery<PlaylistDetail | null>({
     queryKey: [QueryKeys.Playlist, serverId, id],
@@ -69,9 +63,9 @@ export function usePlaylistScreenModel(params: PlaylistRouteParams): PlaylistScr
     staleTime: staleTime.playlists,
     emptyValue: null,
     hasData: hasValue,
-    // The playlist, for a screen opened while the server cannot be asked.
-    // Its songs are not in the catalog's playlist record; a downloaded one
-    // brings the tracks it saved, and any other shows an empty list.
+    // The playlist without its tracks, for a screen opened while the server
+    // cannot be asked. Its songs are not in the catalog's playlist record, so
+    // an offline open shows the playlist and an empty list, as before.
     fallbackValue: fallbackPlaylist,
   });
 

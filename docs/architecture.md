@@ -496,10 +496,6 @@ the next sync. An album's detail entry is persisted at `staleTime: Infinity`
 and no sync rewrites it, so without it a track added to an album already opened
 once never appeared on it at all, though search found it in the tracks list.
 
-Offline, a playlist's screen falls back to the catalog's record of it and, if it
-was downloaded, the tracks the download saved (`downloadedPlaylistSongs`);
-otherwise the list is empty, since the catalog has no membership for it.
-
 `sync(force?: boolean)` throttles at 30 minutes by default; `force=true`
 bypasses that throttle, and bypasses nothing else — every run that gets past it
 refetches all six resources. `syncPlaylists()` refreshes only the playlist list
