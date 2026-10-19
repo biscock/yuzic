@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { QueryKeys } from '@/state/query/queryKeys';
 import type { Album } from '@/domain/entities/Album';
@@ -21,6 +21,8 @@ type UseAlbumResult = {
   error: Error | null;
   /** True when showing persisted-cache data because the server couldn't be asked. */
   degraded: boolean;
+  /** Ask the server for the album again, when it can be asked. */
+  refresh: () => void;
 };
 
 /**
@@ -57,6 +59,19 @@ export function useAlbum(id: string): UseAlbumResult {
     fallbackValue,
   });
 
+  // The detail sits at the catalog's `staleTime: Infinity` and is persisted,
+  // and a catalog sync refreshes the tracks list but not this entry — so a
+  // song added to an album already opened once never appeared on it, even
+  // though search, reading the tracks list, found it (#315). The screen calls
+  // this on focus, as the playlist screen does for the same reason.
+  const { refetch } = query.query;
+  const canAsk = !query.isOffline && !query.serverUnreachable && !!serverId && !!id;
+  const refresh = useCallback(() => {
+    // Not `cancelRefetch`: the first focus lands while the mount's own fetch
+    // may still be in flight, and restarting that would only cost a request.
+    if (canAsk) void refetch({ cancelRefetch: false });
+  }, [canAsk, refetch]);
+
   return {
     album: query.data?.album ?? null,
     songs: query.data?.songs ?? [],
@@ -64,5 +79,6 @@ export function useAlbum(id: string): UseAlbumResult {
     songsLoading: query.query.isFetching && (query.data?.songs?.length ?? 0) === 0,
     error: query.error,
     degraded: query.degraded,
+    refresh,
   };
 }

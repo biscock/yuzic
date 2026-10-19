@@ -488,10 +488,17 @@ Two adjacent things that look like refreshes and are not:
   asks the *server* to rescan its files. It does not refresh the app, and the
   results only arrive on a later sync.
 
-A playlist's own screen is the one detail screen that refetches on focus
-(`usePlaylistScreenModel`), because its tracks are not in the catalog's playlist
-record: without it, a song added from another client stayed invisible until the
-next sync.
+A playlist's and an album's own screens refetch their detail on focus
+(`usePlaylistScreenModel`, and `useAlbum`'s `refresh` from
+`useAlbumScreenModel`). A playlist's tracks are not in the catalog's playlist
+record, so without it a song added from another client stayed invisible until
+the next sync. An album's detail entry is persisted at `staleTime: Infinity`
+and no sync rewrites it, so without it a track added to an album already opened
+once never appeared on it at all, though search found it in the tracks list.
+
+Offline, a playlist's screen falls back to the catalog's record of it and, if it
+was downloaded, the tracks the download saved (`downloadedPlaylistSongs`);
+otherwise the list is empty, since the catalog has no membership for it.
 
 `sync(force?: boolean)` throttles at 30 minutes by default; `force=true`
 bypasses that throttle, and bypasses nothing else — every run that gets past it
