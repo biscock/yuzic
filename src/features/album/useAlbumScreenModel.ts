@@ -7,7 +7,8 @@
  * playback vs. preview-only — is now a typed per-track decision
  * (`trackPlayability.ts`), not two component types.
  */
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import type { Album } from '@/domain/entities/Album';
 import type { Song } from '@/domain/entities/Song';
@@ -108,6 +109,12 @@ export function useAlbumScreenModel(params: AlbumRouteParams): AlbumScreenModel 
 
   const isLocal = !!resolvedLocalId;
   const local = useAlbum(resolvedLocalId ?? '');
+  const { refresh: refreshLocal } = local;
+  useFocusEffect(
+    useCallback(() => {
+      if (isLocal) refreshLocal();
+    }, [isLocal, refreshLocal]),
+  );
   const externalEnabled = !isLocal && !!(albumId || (artist && title));
   const external = useExternalAlbumLookup({ enabled: externalEnabled, source, albumId, artist, title });
 

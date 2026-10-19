@@ -45,6 +45,10 @@ const PlaylistScreen: React.FC = () => {
 
   return (
     <View testID="playlist-screen" style={[styles.screen, { backgroundColor: colors.background }]}>
+      <PlaylistContent playlist={playlist} songs={songs} songsLoading={songsLoading} />
+      {/* After the content, not before it: an absolutely positioned sibling
+          is painted in tree order, so drawn first it sat underneath the
+          screen it is meant to sit on top of (#319). */}
       {degraded && (
         <View
           pointerEvents="box-none"
@@ -58,7 +62,6 @@ const PlaylistScreen: React.FC = () => {
           />
         </View>
       )}
-      <PlaylistContent playlist={playlist} songs={songs} songsLoading={songsLoading} />
     </View>
   );
 };

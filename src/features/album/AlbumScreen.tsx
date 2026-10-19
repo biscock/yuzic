@@ -48,6 +48,10 @@ const AlbumScreen: React.FC = () => {
 
   return (
     <View testID="album-screen" style={[styles.screen, { backgroundColor: colors.background }]}>
+      <AlbumContent model={model} />
+      {/* After the content, not before it: an absolutely positioned sibling
+          is painted in tree order, so drawn first it sat underneath the
+          screen it is meant to sit on top of (#319). */}
       {model.degraded && (
         <View
           pointerEvents="box-none"
@@ -61,7 +65,6 @@ const AlbumScreen: React.FC = () => {
           />
         </View>
       )}
-      <AlbumContent model={model} />
     </View>
   );
 };
