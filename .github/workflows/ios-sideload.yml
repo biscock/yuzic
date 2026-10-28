@@ -14,7 +14,9 @@ concurrency:
 
 jobs:
   build:
-    runs-on: macos-26
+    # Use the Intel pool: ARM runners failed to acquire a hosted machine.
+    # Xcode still cross-compiles the app for arm64 iPhones.
+    runs-on: macos-26-intel
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
