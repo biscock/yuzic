@@ -1,0 +1,53 @@
+name: iOS Sideload (unsigned IPA)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [hex-input]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-sideload-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Install release dependencies
+        run: npm ci --omit=dev
+      - name: Verify patches
+        run: ./tools/verify-patches.sh
+      - name: Install CocoaPods
+        working-directory: ios
+        run: pod install --repo-update
+      - name: Build device IPA
+        run: |
+          set -o pipefail
+          bash tools/build-ios-sideload.sh 2>&1 | tee build-ios-sideload.log
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Yuzic-unsigned
+          path: build/sideload/Yuzic-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-sideload-log
+          path: build-ios-sideload.log
+          if-no-files-found: ignore

@@ -52,12 +52,14 @@ const SettingsScreen: React.FC<Props> = ({
     >
       <Header title={title} onBackPress={onBackPress} rightAction={rightAction} />
       {ScrollContainer ? (
-        <ScrollContainer contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollClearance }, scrollContentStyle]}>
+        <ScrollContainer keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollClearance }, scrollContentStyle]}>
           {children}
         </ScrollContainer>
       ) : (
         <ScrollView
           ref={scrollRef}
+          keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets
           contentContainerStyle={[
             styles.scrollContent,
             { paddingBottom: scrollClearance },

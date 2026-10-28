@@ -16,6 +16,7 @@ import { useIconSize } from '@/features/theme/useIconSize';
 import SettingsCard from '../../components/SettingsCard';
 import SettingsCardHeader from '../../components/SettingsCardHeader';
 import SettingsDivider from '../../components/SettingsDivider';
+import { HexColorInput } from './HexColorInput';
 
 const KEYS = ['background', 'surface', 'text'] as const;
 
@@ -121,6 +122,7 @@ const ColorRow: React.FC<ColorRowProps> = ({ label, value, open, onToggle, onCha
       </Touchable>
       {open && (
         <View style={styles.picker}>
+          <HexColorInput label={label} value={value} onChange={onChange} />
           <ColorPicker value={value} onCompleteJS={c => onChange(c.hex.slice(0, 7))} style={styles.pickerInner} thumbSize={PICKER_THUMB}>
             <Panel1 />
             <HueSlider />

@@ -109,7 +109,12 @@
       "color": {
         "title": "Couleur d'accentuation",
         "info": "Personnalisez la couleur principale de votre application",
-        "change": "Modifier la couleur du thème"
+        "change": "Modifier la couleur du thème",
+        "hex": "Couleur HEX",
+        "hexLabel": "Couleur HEX : {{name}}",
+        "hexHint": "Saisissez trois ou six chiffres hexadécimaux, avec ou sans #, puis appliquez.",
+        "apply": "Appliquer",
+        "invalidHex": "Saisissez une couleur HEX valide, par exemple #C4A7E7."
       },
       "playingBarAction": {
         "title": "Action de la barre de lecture",

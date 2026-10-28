@@ -14,6 +14,7 @@ import SettingsCard from '../../components/SettingsCard';
 import Touchable from '@/components/Touchable';
 import { useRadius } from '@/features/theme/useRadius';
 import { PICKER_THUMB } from './ThemePalette';
+import { HexColorInput } from './HexColorInput';
 
 // The first preset is the default a fresh install starts on, so the list is
 // the one place both are stated.
@@ -67,6 +68,11 @@ export const ThemeColor: React.FC = () => {
 
         {open && (
           <View style={styles.picker}>
+            <HexColorInput
+              label={t('settings.appearance.color.title')}
+              value={themeColor}
+              onChange={color => dispatch(setThemeColor(color))}
+            />
             <ColorPicker
               thumbSize={PICKER_THUMB}
               value={themeColor}

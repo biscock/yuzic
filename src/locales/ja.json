@@ -109,7 +109,12 @@
       "color": {
         "title": "アクセントカラー",
         "info": "アプリのメインカラーをカスタマイズ",
-        "change": "テーマカラーを変更"
+        "change": "テーマカラーを変更",
+        "hex": "HEXカラー",
+        "hexLabel": "{{name}}のHEXカラー",
+        "hexHint": "#の有無にかかわらず、3桁または6桁の16進数を入力して適用してください。",
+        "apply": "適用",
+        "invalidHex": "#C4A7E7のような有効なHEXカラーを入力してください。"
       },
       "playingBarAction": {
         "title": "再生バーのアクション",

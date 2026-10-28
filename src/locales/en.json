@@ -109,7 +109,12 @@
       "color": {
         "title": "Accent colour",
         "info": "Customize the primary color of your app",
-        "change": "Change theme colour"
+        "change": "Change theme colour",
+        "hex": "HEX colour",
+        "hexLabel": "{{name}} HEX colour",
+        "hexHint": "Enter three or six hexadecimal digits, with or without #, then apply.",
+        "apply": "Apply",
+        "invalidHex": "Enter a valid HEX colour, such as #C4A7E7."
       },
       "playingBarAction": {
         "title": "Playing bar action",

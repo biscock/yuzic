@@ -109,7 +109,12 @@
       "color": {
         "title": "主题色",
         "info": "自定义应用的主色调",
-        "change": "修改主题颜色"
+        "change": "修改主题颜色",
+        "hex": "HEX 颜色",
+        "hexLabel": "{{name}} HEX 颜色",
+        "hexHint": "输入三位或六位十六进制数字，可带 #，然后应用。",
+        "apply": "应用",
+        "invalidHex": "请输入有效的 HEX 颜色，例如 #C4A7E7。"
       },
       "playingBarAction": {
         "title": "播放栏操作",
