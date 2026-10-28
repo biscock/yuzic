@@ -294,6 +294,13 @@ Three things about it are not obvious:
   `fire()` warns as well as emitting, because in a release build nothing
   subscribes to that event.
 
+The root layout owns `ExternalResolutionProvider`, inside
+`BottomSheetModalProvider` and outside the navigator, `PlayerHost` and
+`SongActionSheetProvider`. The player and song option sheets are siblings of
+the route tree, so a provider inside `(home)` cannot serve their artist/album
+navigation hooks. Keep one shared instance at the root; a route-local instance
+would split the resolution state and leave the global player without it.
+
 **A track change has to stay cheap on the JS thread.** It lands at the end of
 every song, and a stall there is heard as the app freezing between tracks. What
 belongs in it is the player catching up — `PlayingProvider`, the playing bar,
