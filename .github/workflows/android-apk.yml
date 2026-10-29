@@ -1,0 +1,62 @@
+name: Android APK (personal build)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [android-apk]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install release dependencies
+        run: npm ci --omit=dev
+      - name: Verify patches
+        run: ./tools/verify-patches.sh
+      - name: Read app version
+        run: echo "VERSION_LABEL=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
+      # assembleRelease embeds the JS bundle; the existing Gradle fallback
+      # signs with the checked-in debug.keystore when no release key is set.
+      # This is a personal APK, never an upload to Play or a store counter.
+      - name: Build ARM64 release APK
+        working-directory: android
+        run: |
+          set -o pipefail
+          bash gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a --no-daemon --max-workers=2 2>&1 | tee ../build-android-apk.log
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Yuzic-Android-arm64
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk-log
+          path: build-android-apk.log
+          if-no-files-found: ignore
+          retention-days: 14

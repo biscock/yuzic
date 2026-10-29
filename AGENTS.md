@@ -30,6 +30,10 @@ support boundaries in `docs/`.
 
 ## CI
 
+- Personal fork only: `android-apk.yml` builds an ARM64 APK using the existing
+  local signing fallback, without store uploads or store counter changes.
+  See `docs/personal-android-build.md`.
+
 - Personal fork only: `ios-sideload.yml` and `tools/build-ios-sideload.sh` build
   an unsigned device IPA, without using the store lanes or their build counters.
   They never upload to a store. See `docs/personal-ios-build.md`.
